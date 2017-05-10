@@ -4,7 +4,7 @@
   "description": "Gate requests based on CORS data.",
   "main": "index.js",
   "scripts": {
-    "test": "gulp"
+    "test": "mocha"
   },
   "author": "Jeff Wear <jeff@mixmax.com> (https://mixmax.com)",
   "contributors": [
@@ -12,18 +12,9 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "body-parser": "^1.17.1",
     "cors": "^2.8.3",
-    "emptygif": "^0.1.1",
-    "erik": "^1.2.0",
     "express": "^4.15.2",
-    "gulp": "^3.9.1",
-    "gulp-nodemon": "^2.2.1",
-    "hbs": "^4.0.1",
-    "karma-chrome-launcher": "^2.1.1",
-    "karma-firefox-launcher": "^1.0.1",
-    "karma-safari-launcher": "^1.0.0",
-    "run-sequence": "^1.2.2",
-    "useragent": "^2.1.13"
+    "mocha": "^3.3.0",
+    "supertest": "^3.0.0"
   }
 }
