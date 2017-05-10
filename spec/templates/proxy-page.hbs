@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Proxy Page</title>
+    {{#if metaReferrer}}
+      <meta name="referrer" content="never">
+    {{/if}}
+  </head>
+  <body>
+    <!-- <h1>{{name}}</h1>
+    <img src="/api/image">
+    <form action="/api/form" method="POST">
+      <input type="submit" value="Submit form" />
+    </form> -->
+    <script type="text/javascript">
+      const hasOwn = Object.prototype.hasOwnProperty;
+      function receiveMessage(event) {
+        const obj = event.data;
+        const url = obj && obj.url && (obj.url + '?id=' + obj.id);
+        if (obj.type === 'image') {
+          const img = new Image();
+          img.addEventListener('load', ok);
+          img.addEventListener('error', err);
+          img.src = url;
+        } else if (obj.type === 'xhr') {
+          const xhr = new XMLHttpRequest();
+          xhr.withCredentials = true;
+          xhr.open(obj.method, url, true);
+          const headers = obj.headers || {};
+          for (var header in headers) {
+            if (hasOwn.call(headers, header)) {
+              xhr.setRequestHeader(header, headers[header]);
+            }
+          }
+          xhr.addEventListener('load', function() {
+            if (xhr.status >= 200 && xhr.status < 300) ok();
+            else err(new Error('status code ' + xhr.status));
+          });
+          xhr.addEventListener('error', err);
+          xhr.send(obj.data || null);
+        } else if (obj.type === 'beacon') {
+          const data = new Blob([obj.data], {type: 'application/json'});
+          navigator.sendBeacon(url, data);
+          ok();
+        }
+
+        function ok() {
+          done(null);
+        }
+
+        function err(error) {
+          done(!!error);
+        }
+
+        function done(error) {
+          send({type: 'callback', id: obj.id, error: error});
+        }
+      }
+
+      function send(data) {
+        parent.postMessage(data, '*');
+      }
+
+      addEventListener('message', receiveMessage, false);
+
+      send({type: 'ready', id: +location.hash.slice(1)});
+    </script>
+  </body>
+</html>

@@ -1,3 +1,5 @@
+const url = require('url');
+
 /**
  * Gate requests based on CORS data. For requests that are not permitted via CORS, invoke the
  * failure options callback, which defaults to rejecting the request.
