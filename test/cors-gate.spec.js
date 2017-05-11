@@ -128,6 +128,21 @@ describe('cors-gate', function() {
     });
   });
 
+  describe('options.strict', function() {
+    it('should permit requests without origin', function(done) {
+      this.app.use(corsGate({
+        strict: false,
+        origin: 'http://localhost'
+      }));
+
+      this.app.post('/post', ok);
+
+      request(this.app)
+        .post('/post')
+        .expect(200, done);
+    });
+  });
+
   describe('options.failure', function() {
     it('should not be invoked for same-origin requests', function(done) {
       this.app.use(corsGate({
