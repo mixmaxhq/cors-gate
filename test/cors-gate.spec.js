@@ -219,6 +219,8 @@ describe('cors-gate', function() {
         res.status(correctOrigin ? 200 : 403).end();
       });
 
+      // This scenario won't technically occur in the wild - the referer and origin should always
+      // match.
       request(this.app)
         .get('/get')
         .set('referer', 'http://localhost:8080/home')
