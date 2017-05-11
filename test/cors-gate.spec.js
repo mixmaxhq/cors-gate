@@ -42,7 +42,7 @@ describe('cors-gate', function() {
 
   it('should allow permitted cross-origin requests', function(done) {
     this.app.use(cors({
-      origin: ['http://localhost', 'http://localhost:8080']
+      origin: 'http://localhost:8080'
     }), corsGate({
       allowSafe: false,
       origin: 'http://localhost'
@@ -85,7 +85,7 @@ describe('cors-gate', function() {
 
   it('should reject requests from other origins', function(done) {
     this.app.use(cors({
-      origin: ['http://localhost', 'http://localhost:8080']
+      origin: 'http://localhost:8080'
     }), corsGate({
       origin: 'http://localhost'
     }));
@@ -179,7 +179,7 @@ describe('cors-gate', function() {
 
     it('should be invoked for requests from other origins', function(done) {
       this.app.use(cors({
-        origin: ['http://localhost', 'http://localhost:8080']
+        origin: 'http://localhost:8080'
       }), corsGate({
         origin: 'http://localhost',
         failure: function(req, res) {
