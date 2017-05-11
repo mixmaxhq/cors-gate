@@ -62,9 +62,22 @@ function corsGate(options) {
 };
 
 /**
- * Replace the Origin header with the Origin data from the Referer, if the Origin header is missing.
- * This patches Firefox's behavior as of Firefox 53, which does not send the Origin
- * header for same-origin requests.
+ * If the Origin header is missing, fill it with the origin part of the Referer.
+ *
+ * Firefox does not send the Origin header for same-origin requests, as of version 53. This is a
+ * documented bug, so this middleware enables verification of the Origin in that case. Additionally,
+ * no browser sends the Origin header when sending a GET request to load an image. We could simply
+ * allow all GET requests - GET requests are safe, per HTTP - but we'd rather reject unauthorized
+ * cross-origin GET requests wholesale.
+ *
+ * At present, Chrome and Safari do not support the strict-origin Referrer-Policy, so we can only
+ * patch the Origin from the Referer on Firefox. In patching it, however, we can reject unauthorized
+ * cross-origin GET requests from images, and once Chrome and Safari support strict-origin, we'll
+ * be able to do so on all three platforms.
+ *
+ * In order to actually reject these requests, however, the patched Origin data must be visible to
+ * the cors middleware. This middleware is distinct because it must appear before cors and corsGate
+ * to perform all the described tasks.
  */
 function originFallbackToReferrer() {
   return function(req, res, next) {

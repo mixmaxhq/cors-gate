@@ -72,7 +72,13 @@ app.use(corsGate({
 
 ### Firefox and the Origin header
 
-Firefox does not set the `Origin` header [on same-origin requests](http://stackoverflow.com/a/15514049/495611) (see also [csrf-request-tester](https://github.com/mixmaxhq/csrf-request-tester)). Firefox does, however, send a `Referer` header. Use `corsGate.originFallbackToReferrer` to fill the `Origin` header from `Referer` if when missing. Note that this should be used prior to `cors` to ensure that it sets the `Access-Control-Allow-Origin` header appropriately.
+Firefox does not set the `Origin` header [on same-origin requests](http://stackoverflow.com/a/15514049/495611) (see also [csrf-request-tester](https://github.com/mixmaxhq/csrf-request-tester))for same-origin requests, as of version 53. The `corsGate.originFallbackToReferrer` middleware will, if the `Origin` header is missing, fill it with the origin part of the `Referer`. This middleware thus enables verification of the `Origin` for same-origin requests.
+
+Additionally, no browser sends the `Origin` header when sending a `GET` request to load an image. We could simply allow all `GET` requests - `GET` requests are safe, per `HTTP` - but we'd rather reject unauthorized cross-origin `GET` requests wholesale.
+
+At present, Chrome and Safari do not support the `strict-origin` `Referrer-Policy`, so we can only patch the `Origin` from the `Referer` on Firefox. In patching it, however, we can reject unauthorized cross-origin `GET` requests from images, and once Chrome and Safari support `strict-origin`, we'll be able to do so on all three platforms.
+
+In order to actually reject these requests, however, the patched `Origin` data must be visible to the `cors` middleware. This middleware is distinct because it must appear before `cors` and `corsGate` to perform all the described tasks.
 
 ```js
 app.use(corsGate.originFallbackToReferrer());
