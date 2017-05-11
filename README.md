@@ -32,7 +32,7 @@ const corsGate = require('cors-gate');
 const app = express();
 
 app.use(cors({
-  origin: ['https://app.mixmax.com', 'https://api.mixmax.com'],
+  origin: ['https://app.mixmax.com', 'https://other-app.mixmax.com'],
   credentials: true
 }));
 
@@ -48,7 +48,8 @@ app.use(corsGate({
 
 // add a new contact
 app.post('/api/contacts', function(req, res) {
-  
+  // ...
+  res.status(200).json({id: id});
 });
 ```
 
