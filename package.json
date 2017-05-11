@@ -1,0 +1,20 @@
+{
+  "name": "cors-gate",
+  "version": "1.0.0",
+  "description": "Gate requests based on CORS data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Jeff Wear <jeff@mixmax.com> (https://mixmax.com)",
+  "contributors": [
+    "Eli Skeggs <eli@mixmax.com> (https://mixmax.com)"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "cors": "^2.8.3",
+    "express": "^4.15.2",
+    "mocha": "^3.3.0",
+    "supertest": "^3.0.0"
+  }
+}
