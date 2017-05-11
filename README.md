@@ -53,6 +53,23 @@ app.post('/api/contacts', function(req, res) {
 });
 ```
 
+### Alternative failure handling
+
+By default, `cors-gate` will return `403 Unauthorized` to any requests that aren't permitted by the specified options.
+
+The `failure` option offers a means to change this behavior. This way, unauthorized cross-origin requests can be permitted in a restricted manner - perhaps by requiring an explicit authentication mechanism rather than cookie-based authentication to prevent cross-site scripting. As such, `cors-gate` can serve as a CSRF mechanism without the need for a token, while still allowing limited forms of third-party cross-origin API requests.
+
+```js
+app.use(corsGate({
+  origin: 'https://api.mixmax.com',
+  failure: function(req, res, next) {
+    // requests from other origins will have this flag set.
+    req.requireExplicitAuthentication = true;
+    next();
+  }
+}));
+```
+
 ### Firefox and the Origin header
 
 Firefox does not set the `Origin` header [on same-origin requests](http://stackoverflow.com/a/15514049/495611) (see also [csrf-request-tester](https://github.com/mixmaxhq/csrf-request-tester)). Firefox does, however, send a `Referer` header. Use `corsGate.originFallbackToReferrer` to fill the `Origin` header from `Referer` if when missing. Note that this should be used prior to `cors` to ensure that it sets the `Access-Control-Allow-Origin` header appropriately.
