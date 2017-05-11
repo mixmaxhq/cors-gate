@@ -42,10 +42,6 @@ function corsGate(options) {
         return failure(req, res, next);
       }
 
-      // The `origin` header will always be sent for browsers that support CORS:
-      // https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Origin
-      // If the header is missing, this is not a browser request and thus we shouldn't
-      // do anything (there's no risk of CSRF).
       return next();
     }
 
