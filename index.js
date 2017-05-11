@@ -68,7 +68,7 @@ function corsGate(options) {
  */
 function originFallbackToReferrer() {
   return function(req, res, next) {
-    const origin = (req.headers.origin || '').trim();
+    const origin = req.headers.origin;
     if (!origin) {
       const ref = req.headers.referer;
       if (ref) {
