@@ -72,7 +72,7 @@ app.use(corsGate({
 
 ### Firefox and the Origin header
 
-Firefox does not set the `Origin` header [on same-origin requests](http://stackoverflow.com/a/15514049/495611) (see also [csrf-request-tester](https://github.com/mixmaxhq/csrf-request-tester))for same-origin requests, as of version 53. The `corsGate.originFallbackToReferrer` middleware will, if the `Origin` header is missing, fill it with the origin part of the `Referer`. This middleware thus enables verification of the `Origin` for same-origin requests.
+Firefox does not set the `Origin` header [on same-origin requests](http://stackoverflow.com/a/15514049/495611) (see also [csrf-request-tester](https://github.com/mixmaxhq/csrf-request-tester)) for same-origin requests, as of version 53. The `corsGate.originFallbackToReferrer` middleware will, if the `Origin` header is missing, fill it with the origin part of the `Referer`. This middleware thus enables verification of the `Origin` for same-origin requests.
 
 Additionally, no browser sends the `Origin` header when sending a `GET` request to load an image. We could simply allow all `GET` requests - `GET` requests are safe, per `HTTP` - but we'd rather reject unauthorized cross-origin `GET` requests wholesale.
 
