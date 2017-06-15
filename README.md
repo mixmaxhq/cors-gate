@@ -5,6 +5,9 @@ cors-gate
 
 Connect-compatible middleware to selectively reject requests based on CORS rules.
 
+This lets you implement an elegant alternative to CSRF tokens if you only need to support
+modern browsers. For more information, see [our blog post](https://mixmax.com/blog/modern-csrf).
+
 Install
 -------
 
