@@ -89,6 +89,10 @@ app.use(cors({ ... }));
 app.use(corsGate({ ... }));
 ```
 
+### Language ports
+
+- Go: [Roemerb/corsgate](https://github.com/Roemerb/corsgate)
+
 License
 -------
 
