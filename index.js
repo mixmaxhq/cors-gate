@@ -1,4 +1,5 @@
 const url = require('url');
+const unless = require('express-unless');
 
 /**
  * Gate requests based on CORS data. For requests that are not permitted via CORS, invoke the
@@ -14,7 +15,7 @@ const url = require('url');
  * @param {Function=} options.failure A standard connect-style callback for handling failure.
  *   Defaults to rejecting the request with 403 Unauthorized.
  */
-function corsGate(options) {
+module.exports = function(options) {
   options = Object.assign({
     strict: true,
     allowSafe: true,
@@ -33,7 +34,7 @@ function corsGate(options) {
   const thisOrigin = options.origin.toLowerCase();
   const failure = options.failure;
 
-  return function(req, res, next) {
+  const middleware = function(req, res, next) {
     const origin = (req.headers.origin || '').toLowerCase().trim();
 
     if (!origin) {
@@ -59,43 +60,43 @@ function corsGate(options) {
     // CSRF! Abort.
     failure(req, res, next);
   };
-};
 
-/**
- * If the Origin header is missing, fill it with the origin part of the Referer.
- *
- * Firefox does not send the Origin header for same-origin requests, as of version 53. This is a
- * documented bug, so this middleware enables verification of the Origin in that case. Additionally,
- * no browser sends the Origin header when sending a GET request to load an image. We could simply
- * allow all GET requests - GET requests are safe, per HTTP - but we'd rather reject unauthorized
- * cross-origin GET requests wholesale.
- *
- * At present, Chrome and Safari do not support the strict-origin Referrer-Policy, so we can only
- * patch the Origin from the Referer on Firefox. In patching it, however, we can reject unauthorized
- * cross-origin GET requests from images, and once Chrome and Safari support strict-origin, we'll
- * be able to do so on all three platforms.
- *
- * In order to actually reject these requests, however, the patched Origin data must be visible to
- * the cors middleware. This middleware is distinct because it must appear before cors and corsGate
- * to perform all the described tasks.
- */
-function originFallbackToReferrer() {
-  return function(req, res, next) {
-    const origin = req.headers.origin;
-    if (!origin) {
-      const ref = req.headers.referer;
-      if (ref) {
-        const parts = url.parse(ref);
-        req.headers.origin = url.format({
-          protocol: parts.protocol,
-          host: parts.host
-        });
+  /**
+   * If the Origin header is missing, fill it with the origin part of the Referer.
+   *
+   * Firefox does not send the Origin header for same-origin requests, as of version 53. This is a
+   * documented bug, so this middleware enables verification of the Origin in that case. Additionally,
+   * no browser sends the Origin header when sending a GET request to load an image. We could simply
+   * allow all GET requests - GET requests are safe, per HTTP - but we'd rather reject unauthorized
+   * cross-origin GET requests wholesale.
+   *
+   * At present, Chrome and Safari do not support the strict-origin Referrer-Policy, so we can only
+   * patch the Origin from the Referer on Firefox. In patching it, however, we can reject unauthorized
+   * cross-origin GET requests from images, and once Chrome and Safari support strict-origin, we'll
+   * be able to do so on all three platforms.
+   *
+   * In order to actually reject these requests, however, the patched Origin data must be visible to
+   * the cors middleware. This middleware is distinct because it must appear before cors and corsGate
+   * to perform all the described tasks.
+   */
+  middleware.originFallbackToReferrer = middleware.originFallbackToReferer = function originFallbackToReferrer() {
+    return function(req, res, next) {
+      const origin = req.headers.origin;
+      if (!origin) {
+        const ref = req.headers.referer;
+        if (ref) {
+          const parts = url.parse(ref);
+          req.headers.origin = url.format({
+            protocol: parts.protocol,
+            host: parts.host
+          });
+        }
       }
-    }
-    next();
-  };
-}
+      next();
+    };
+  }
 
-corsGate.originFallbackToReferrer = corsGate.originFallbackToReferer = originFallbackToReferrer;
+  middleware.unless = unless;
 
-module.exports = corsGate;
+  return middleware;
+};
