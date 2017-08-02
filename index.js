@@ -59,7 +59,7 @@ function corsGate(options) {
     // CSRF! Abort.
     failure(req, res, next);
   };
-};
+}
 
 /**
  * If the Origin header is missing, fill it with the origin part of the Referer.
