@@ -14,14 +14,14 @@ Install
 Run this in your project:
 
 ```sh
-$ yarn add cors-gate
+$ npm install cors-gate
 ```
 
 Test
 ----
 
 ```sh
-$ yarn test
+$ npm test
 ```
 
 Usage
