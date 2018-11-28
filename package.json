@@ -23,5 +23,9 @@
   },
   "pre-commit": [
     "lint"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://github.com/mixmaxhq/cors-gate.git"
+  }
 }
