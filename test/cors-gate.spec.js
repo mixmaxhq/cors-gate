@@ -126,6 +126,34 @@ describe('cors-gate', function() {
         .get('/get')
         .expect(403, done);
     });
+
+    it('can be given a function returning false', function(done) {
+      this.app.use(corsGate({
+        strict: true,
+        allowSafe: () => false,
+        origin: 'http://localhost'
+      }));
+
+      this.app.get('/get', ok);
+
+      request(this.app)
+        .get('/get')
+        .expect(403, done);
+    });
+
+    it('can be given a function returning true', function(done) {
+      this.app.use(corsGate({
+        strict: true,
+        allowSafe: () => true,
+        origin: 'http://localhost'
+      }));
+
+      this.app.get('/get', ok);
+
+      request(this.app)
+        .get('/get')
+        .expect(200, done);
+    });
   });
 
   describe('options.strict', function() {
