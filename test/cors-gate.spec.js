@@ -126,6 +126,20 @@ describe('cors-gate', function() {
         .get('/get')
         .expect(403, done);
     });
+
+    it('can be given a function', function(done) {
+      this.app.use(corsGate({
+        strict: true,
+        allowSafe: () => false,
+        origin: 'http://localhost'
+      }));
+
+      this.app.get('/get', ok);
+
+      request(this.app)
+        .get('/get')
+        .expect(403, done);
+    });
   });
 
   describe('options.strict', function() {

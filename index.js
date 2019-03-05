@@ -9,8 +9,8 @@ const url = require('url');
  *   proceed.
  * @param {Boolean=} options.strict Whether to reject requests that lack an Origin header. Defaults
  *   to true.
- * @param {Boolean=} options.allowSafe Whether to enforce the strict mode for safe requests (HEAD,
- *   GET). Defaults to true.
+ * @param {Boolean|Function=} options.allowSafe Whether to enforce the strict mode for safe requests (HEAD,
+ *   GET). Defaults to true. A function can be passed here, that will be passed req and res and should return a boolean.
  * @param {Function=} options.failure A standard connect-style callback for handling failure.
  *   Defaults to rejecting the request with 403 Unauthorized.
  */
@@ -37,8 +37,9 @@ function corsGate(options) {
     const origin = (req.headers.origin || '').toLowerCase().trim();
 
     if (!origin) {
+      const allowSafe = typeof(options.allowSafe) === 'boolean' ? options.allowSafe : options.allowSafe(req, res);
       // Fail on missing origin when in strict mode, but allow safe requests if allowSafe set.
-      if (options.strict && (!options.allowSafe || ['GET', 'HEAD'].indexOf(req.method) === -1)) {
+      if (options.strict && (!allowSafe || ['GET', 'HEAD'].indexOf(req.method) === -1)) {
         return failure(req, res, next);
       }
 
