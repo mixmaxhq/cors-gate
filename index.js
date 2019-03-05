@@ -1,6 +1,23 @@
 const url = require('url');
 
 /**
+ * Called when we successfully gate a request. If the
+ * request is an OPTION request, terminate the request here.
+ * Otherwise, pass on to the next middleware.
+ */
+function success(req, res, next) {
+  if (req.method === 'OPTIONS') {
+    // If this is an OPTIONS request, terminate here.
+    res.statusCode = 204;
+    // Safari needs a content-length for 204, see https://github.com/expressjs/cors/blob/master/lib/index.js#L176
+    res.setHeader('Content-Length', '0');
+    res.end();
+  } else {
+    next();
+  }
+}
+
+/**
  * Gate requests based on CORS data. For requests that are not permitted via CORS, invoke the
  * failure options callback, which defaults to rejecting the request.
  *
@@ -43,11 +60,11 @@ function corsGate(options) {
         return failure(req, res, next);
       }
 
-      return next();
+      success(req, res, next);
     }
 
     // Always allow same-origin requests.
-    if (origin === thisOrigin) return next();
+    if (origin === thisOrigin) return success(req, res, next);
 
     // Now this is a cross-origin request. Check if we should allow it based on headers set by
     // previous CORS middleware. Note that `getHeader` is case-insensitive.
@@ -55,7 +72,7 @@ function corsGate(options) {
 
     // Two values: allow any origin, or a specific origin.
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Access-Control-Allow-Origin
-    if ((otherOrigin === '*') || (origin === otherOrigin)) return next();
+    if ((otherOrigin === '*') || (origin === otherOrigin)) return success(req, res, next);
 
     // CSRF! Abort.
     failure(req, res, next);
