@@ -127,7 +127,7 @@ describe('cors-gate', function() {
         .expect(403, done);
     });
 
-    it('can be given a function', function(done) {
+    it('can be given a function returning false', function(done) {
       this.app.use(corsGate({
         strict: true,
         allowSafe: () => false,
@@ -139,6 +139,20 @@ describe('cors-gate', function() {
       request(this.app)
         .get('/get')
         .expect(403, done);
+    });
+
+    it('can be given a function returning true', function(done) {
+      this.app.use(corsGate({
+        strict: true,
+        allowSafe: () => true,
+        origin: 'http://localhost'
+      }));
+
+      this.app.get('/get', ok);
+
+      request(this.app)
+        .get('/get')
+        .expect(200, done);
     });
   });
 
