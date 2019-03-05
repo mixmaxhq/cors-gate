@@ -37,7 +37,7 @@ function corsGate(options) {
     const origin = (req.headers.origin || '').toLowerCase().trim();
 
     if (!origin) {
-      const allowSafe = typeof(options.allowSafe) === 'boolean' ? options.allowSafe : options.allowSafe(req, res);
+      const allowSafe = !!(typeof options.allowSafe === 'function' ? options.allowSafe(req, res) : options.allowSafe);
       // Fail on missing origin when in strict mode, but allow safe requests if allowSafe set.
       if (options.strict && (!allowSafe || ['GET', 'HEAD'].indexOf(req.method) === -1)) {
         return failure(req, res, next);
