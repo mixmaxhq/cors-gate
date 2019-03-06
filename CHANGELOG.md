@@ -1,5 +1,7 @@
 ## Release History
 
+* 2.0.0 Terminate OPTIONS requests
+
 * 1.1.2 Terminate preflight requests
 
 * 1.1.1 Terminate OPTION requests
