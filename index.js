@@ -60,7 +60,7 @@ function corsGate(options) {
         return failure(req, res, next);
       }
 
-      success(req, res, next);
+      return success(req, res, next);
     }
 
     // Always allow same-origin requests.
