@@ -71,6 +71,22 @@ describe('cors-gate', function() {
       .expect(200, done);
   });
 
+  it('should terminate on preflight requests', function(done) {
+    this.app.use(cors({
+      origin: '*'
+    }), corsGate({
+      origin: 'http://localhost'
+    }));
+
+    this.app.post('/post', ok);
+
+    request(this.app)
+      .options('/post')
+      .set('origin', 'http://localhost:8080')
+      .expect('Content-Length', '0')
+      .expect(204, done);
+  });
+
   it('should reject requests without origin', function(done) {
     this.app.use(corsGate({
       origin: 'http://localhost'
