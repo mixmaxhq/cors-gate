@@ -83,6 +83,7 @@ describe('cors-gate', function() {
     request(this.app)
       .options('/post')
       .set('origin', 'http://localhost:8080')
+      .expect('Content-Length', '0')
       .expect(204, done);
   });
 
