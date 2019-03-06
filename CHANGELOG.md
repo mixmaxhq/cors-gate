@@ -1,5 +1,7 @@
 ## Release History
 
+* 2.0.2 Fix for calling success without returning
+
 * 2.0.1 Re-publishing 2.0
 
 * 2.0.0 Terminate OPTIONS requests
