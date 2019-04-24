@@ -22,8 +22,8 @@ function success(req, res, next) {
  * failure options callback, which defaults to rejecting the request.
  *
  * @param {Object} options
- * @param {String} options.origin The origin of the server - requests from this origin will always
- *   proceed.
+ * @param {String|Function} options.origin The origin of the server - requests from this origin will always
+ *   proceed. A function can be passed here, that will be passed the requests origin.
  * @param {Boolean=} options.strict Whether to reject requests that lack an Origin header. Defaults
  *   to true.
  * @param {Boolean|Function=} options.allowSafe Whether to enforce the strict mode for safe requests (HEAD,
@@ -43,11 +43,14 @@ function corsGate(options) {
     }
   }, options);
 
-  if (typeof options.origin !== 'string') {
+  if (typeof options.origin !== 'string' && typeof options.origin !== 'function') {
     throw new Error("Must specify the server's origin.");
   }
 
-  const thisOrigin = options.origin.toLowerCase();
+  const allowOrigin = typeof options.origin === 'function' ?
+    options.origin :
+    function(origin) { return origin === options.origin.toLowerCase(); };
+
   const failure = options.failure;
 
   return function(req, res, next) {
@@ -64,7 +67,7 @@ function corsGate(options) {
     }
 
     // Always allow same-origin requests.
-    if (origin === thisOrigin) return success(req, res, next);
+    if (allowOrigin(origin)) return success(req, res, next);
 
     // Now this is a cross-origin request. Check if we should allow it based on headers set by
     // previous CORS middleware. Note that `getHeader` is case-insensitive.

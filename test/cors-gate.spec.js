@@ -114,6 +114,22 @@ describe('cors-gate', function() {
       .expect(403, done);
   });
 
+  it('can be given a function for matching origin', function(done) {
+    this.app.use(corsGate({
+      allowSafe: false,
+      origin: function (origin) {
+        return origin === 'http://localhost';
+      }
+    }));
+
+    this.app.get('/get', ok);
+
+    request(this.app)
+      .get('/get')
+      .set('origin', 'http://localhost')
+      .expect(200, done);
+  });
+
   describe('options.allowSafe', function() {
     it('should allow unspecified safe requests', function(done) {
       this.app.use(corsGate({
