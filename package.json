@@ -4,8 +4,9 @@
   "description": "Gate requests based on CORS data.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "lint": "eslint ."
+    "ci": "npm run lint && npm test",
+    "lint": "eslint .",
+    "test": "mocha"
   },
   "author": "Jeff Wear <jeff@mixmax.com> (https://mixmax.com)",
   "contributors": [
