@@ -32,16 +32,19 @@ function success(req, res, next) {
  *   Defaults to rejecting the request with 403 Unauthorized.
  */
 function corsGate(options) {
-  options = Object.assign({
-    strict: true,
-    allowSafe: true,
-    failure(req, res, next) {
-      // Set `statusCode` vs. using `res#status`, as https://github.com/expressjs/cors does, so this
-      // will work with any Connect-compatible server.
-      res.statusCode = 403;
-      res.end();
-    }
-  }, options);
+  options = Object.assign(
+    {
+      strict: true,
+      allowSafe: true,
+      failure(req, res, next) {
+        // Set `statusCode` vs. using `res#status`, as https://github.com/expressjs/cors does, so this
+        // will work with any Connect-compatible server.
+        res.statusCode = 403;
+        res.end();
+      },
+    },
+    options
+  );
 
   if (typeof options.origin !== 'string') {
     throw new Error("Must specify the server's origin.");
@@ -54,17 +57,19 @@ function corsGate(options) {
     const origin = (req.headers.origin || '').toLowerCase().trim();
 
     if (!origin) {
-      const allowSafe = !!(typeof options.allowSafe === 'function' ? options.allowSafe(req, res) : options.allowSafe);
+      const allowSafe = !!(typeof options.allowSafe === 'function'
+        ? options.allowSafe(req, res)
+        : options.allowSafe);
       // Fail on missing origin when in strict mode, but allow safe requests if allowSafe set.
       if (options.strict && (!allowSafe || ['GET', 'HEAD'].indexOf(req.method) === -1)) {
-        return failure(req, res, next);
+        return void failure(req, res, next);
       }
 
-      return success(req, res, next);
+      return void success(req, res, next);
     }
 
     // Always allow same-origin requests.
-    if (origin === thisOrigin) return success(req, res, next);
+    if (origin === thisOrigin) return void success(req, res, next);
 
     // Now this is a cross-origin request. Check if we should allow it based on headers set by
     // previous CORS middleware. Note that `getHeader` is case-insensitive.
@@ -72,7 +77,7 @@ function corsGate(options) {
 
     // Two values: allow any origin, or a specific origin.
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Access-Control-Allow-Origin
-    if ((otherOrigin === '*') || (origin === otherOrigin)) return success(req, res, next);
+    if (otherOrigin === '*' || origin === otherOrigin) return void success(req, res, next);
 
     // CSRF! Abort.
     failure(req, res, next);
@@ -106,7 +111,7 @@ function originFallbackToReferrer() {
         const parts = url.parse(ref);
         req.headers.origin = url.format({
           protocol: parts.protocol,
-          host: parts.host
+          host: parts.host,
         });
       }
     }
