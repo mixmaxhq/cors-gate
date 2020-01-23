@@ -62,14 +62,14 @@ function corsGate(options) {
         : options.allowSafe);
       // Fail on missing origin when in strict mode, but allow safe requests if allowSafe set.
       if (options.strict && (!allowSafe || ['GET', 'HEAD'].indexOf(req.method) === -1)) {
-        return failure(req, res, next);
+        return void failure(req, res, next);
       }
 
-      return success(req, res, next);
+      return void success(req, res, next);
     }
 
     // Always allow same-origin requests.
-    if (origin === thisOrigin) return success(req, res, next);
+    if (origin === thisOrigin) return void success(req, res, next);
 
     // Now this is a cross-origin request. Check if we should allow it based on headers set by
     // previous CORS middleware. Note that `getHeader` is case-insensitive.
@@ -77,7 +77,7 @@ function corsGate(options) {
 
     // Two values: allow any origin, or a specific origin.
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Access-Control-Allow-Origin
-    if (otherOrigin === '*' || origin === otherOrigin) return success(req, res, next);
+    if (otherOrigin === '*' || origin === otherOrigin) return void success(req, res, next);
 
     // CSRF! Abort.
     failure(req, res, next);
