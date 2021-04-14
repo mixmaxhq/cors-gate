@@ -13,10 +13,12 @@ describe('cors-gate', function() {
   });
 
   it('should allow same-origin requests', function(done) {
-    this.app.use(corsGate({
-      allowSafe: false,
-      origin: 'http://localhost'
-    }));
+    this.app.use(
+      corsGate({
+        allowSafe: false,
+        origin: 'http://localhost',
+      })
+    );
 
     this.app.get('/get', ok);
 
@@ -27,10 +29,12 @@ describe('cors-gate', function() {
   });
 
   it('should allow same-origin POST requests', function(done) {
-    this.app.use(corsGate({
-      allowSafe: false,
-      origin: 'http://localhost'
-    }));
+    this.app.use(
+      corsGate({
+        allowSafe: false,
+        origin: 'http://localhost',
+      })
+    );
 
     this.app.post('/post', ok);
 
@@ -41,12 +45,15 @@ describe('cors-gate', function() {
   });
 
   it('should allow permitted cross-origin requests', function(done) {
-    this.app.use(cors({
-      origin: 'http://localhost:8080'
-    }), corsGate({
-      allowSafe: false,
-      origin: 'http://localhost'
-    }));
+    this.app.use(
+      cors({
+        origin: 'http://localhost:8080',
+      }),
+      corsGate({
+        allowSafe: false,
+        origin: 'http://localhost',
+      })
+    );
 
     this.app.post('/post', ok);
 
@@ -57,11 +64,14 @@ describe('cors-gate', function() {
   });
 
   it('should allow wildcard origins', function(done) {
-    this.app.use(cors({
-      origin: '*'
-    }), corsGate({
-      origin: 'http://localhost'
-    }));
+    this.app.use(
+      cors({
+        origin: '*',
+      }),
+      corsGate({
+        origin: 'http://localhost',
+      })
+    );
 
     this.app.post('/post', ok);
 
@@ -72,11 +82,14 @@ describe('cors-gate', function() {
   });
 
   it('should terminate on preflight requests', function(done) {
-    this.app.use(cors({
-      origin: '*'
-    }), corsGate({
-      origin: 'http://localhost'
-    }));
+    this.app.use(
+      cors({
+        origin: '*',
+      }),
+      corsGate({
+        origin: 'http://localhost',
+      })
+    );
 
     this.app.post('/post', ok);
 
@@ -88,9 +101,11 @@ describe('cors-gate', function() {
   });
 
   it('should reject requests without origin', function(done) {
-    this.app.use(corsGate({
-      origin: 'http://localhost'
-    }));
+    this.app.use(
+      corsGate({
+        origin: 'http://localhost',
+      })
+    );
 
     this.app.post('/post', ok);
 
@@ -100,11 +115,14 @@ describe('cors-gate', function() {
   });
 
   it('should reject requests from other origins', function(done) {
-    this.app.use(cors({
-      origin: 'http://localhost:8080'
-    }), corsGate({
-      origin: 'http://localhost'
-    }));
+    this.app.use(
+      cors({
+        origin: 'http://localhost:8080',
+      }),
+      corsGate({
+        origin: 'http://localhost',
+      })
+    );
 
     this.app.post('/post', ok);
 
@@ -115,12 +133,12 @@ describe('cors-gate', function() {
   });
 
   it('can be given a function for matching origin', function(done) {
-    this.app.use(corsGate({
-      allowSafe: false,
-      origin: function (origin) {
-        return origin === 'http://localhost';
-      }
-    }));
+    this.app.use(
+      corsGate({
+        allowSafe: false,
+        origin: (origin) => origin === 'http://localhost',
+      })
+    );
 
     this.app.get('/get', ok);
 
@@ -132,11 +150,13 @@ describe('cors-gate', function() {
 
   describe('options.allowSafe', function() {
     it('should allow unspecified safe requests', function(done) {
-      this.app.use(corsGate({
-        strict: true,
-        allowSafe: true,
-        origin: 'http://localhost'
-      }));
+      this.app.use(
+        corsGate({
+          strict: true,
+          allowSafe: true,
+          origin: 'http://localhost',
+        })
+      );
 
       this.app.get('/get', ok);
 
@@ -146,11 +166,13 @@ describe('cors-gate', function() {
     });
 
     it('should reject unspecified safe requests', function(done) {
-      this.app.use(corsGate({
-        strict: true,
-        allowSafe: false,
-        origin: 'http://localhost'
-      }));
+      this.app.use(
+        corsGate({
+          strict: true,
+          allowSafe: false,
+          origin: 'http://localhost',
+        })
+      );
 
       this.app.get('/get', ok);
 
@@ -160,11 +182,13 @@ describe('cors-gate', function() {
     });
 
     it('can be given a function returning false', function(done) {
-      this.app.use(corsGate({
-        strict: true,
-        allowSafe: () => false,
-        origin: 'http://localhost'
-      }));
+      this.app.use(
+        corsGate({
+          strict: true,
+          allowSafe: () => false,
+          origin: 'http://localhost',
+        })
+      );
 
       this.app.get('/get', ok);
 
@@ -174,11 +198,13 @@ describe('cors-gate', function() {
     });
 
     it('can be given a function returning true', function(done) {
-      this.app.use(corsGate({
-        strict: true,
-        allowSafe: () => true,
-        origin: 'http://localhost'
-      }));
+      this.app.use(
+        corsGate({
+          strict: true,
+          allowSafe: () => true,
+          origin: 'http://localhost',
+        })
+      );
 
       this.app.get('/get', ok);
 
@@ -190,10 +216,12 @@ describe('cors-gate', function() {
 
   describe('options.strict', function() {
     it('should permit requests without origin', function(done) {
-      this.app.use(corsGate({
-        strict: false,
-        origin: 'http://localhost'
-      }));
+      this.app.use(
+        corsGate({
+          strict: false,
+          origin: 'http://localhost',
+        })
+      );
 
       this.app.post('/post', ok);
 
@@ -205,13 +233,15 @@ describe('cors-gate', function() {
 
   describe('options.failure', function() {
     it('should not be invoked for same-origin requests', function(done) {
-      this.app.use(corsGate({
-        allowSafe: false,
-        origin: 'http://localhost',
-        failure: function(req, res) {
-          res.status(403).end();
-        }
-      }));
+      this.app.use(
+        corsGate({
+          allowSafe: false,
+          origin: 'http://localhost',
+          failure(req, res) {
+            res.status(403).end();
+          },
+        })
+      );
 
       this.app.post('/post', ok);
 
@@ -221,14 +251,15 @@ describe('cors-gate', function() {
         .expect(200, done);
     });
 
-
     it('should be invoked for requests without origin', function(done) {
-      this.app.use(corsGate({
-        origin: 'http://localhost',
-        failure: function(req, res) {
-          res.status(204).end();
-        }
-      }));
+      this.app.use(
+        corsGate({
+          origin: 'http://localhost',
+          failure(req, res) {
+            res.status(204).end();
+          },
+        })
+      );
 
       this.app.post('/post', ok);
 
@@ -238,14 +269,17 @@ describe('cors-gate', function() {
     });
 
     it('should be invoked for requests from other origins', function(done) {
-      this.app.use(cors({
-        origin: 'http://localhost:8080'
-      }), corsGate({
-        origin: 'http://localhost',
-        failure: function(req, res) {
-          res.status(204).end();
-        }
-      }));
+      this.app.use(
+        cors({
+          origin: 'http://localhost:8080',
+        }),
+        corsGate({
+          origin: 'http://localhost',
+          failure(req, res) {
+            res.status(204).end();
+          },
+        })
+      );
 
       this.app.post('/post', ok);
 
