@@ -52,9 +52,7 @@ function corsGate(options) {
 
   let allowOrigin = options.origin;
   if (typeof allowOrigin !== 'function') {
-    allowOrigin = function(origin) {
-      return origin === options.origin.toLowerCase();
-    };
+    allowOrigin = (origin) => origin === options.origin.toLowerCase();
   }
 
   const failure = options.failure;
